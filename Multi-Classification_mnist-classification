@@ -1,0 +1,50 @@
+import tensorflow
+from tensorflow import keras
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense,Flatten
+
+(x_train,y_train),(x_test,y_test) = keras.datasets.mnist.load_data()
+
+print(x_train.shape)
+print(y_train.shape)
+print(x_test.shape)
+print(y_test.shape)
+
+O/p -
+(60000, 28, 28)
+(60000,)
+(10000, 28, 28)
+(10000,)
+
+import matplotlib.pyplot as plt
+plt.imshow(x_train[0])
+
+# Normalization -Normalization in machine learning is the process of translating data into the range [0, 1] (or any other range) or simply transforming data onto the unit sphere
+
+x_train = x_train/255
+x_test = x_test/255
+
+model = Sequential()
+
+model.add(Flatten(input_shape=(28,28)))
+model.add(Dense(128,activation='relu'))
+model.add(Dense(32,activation='relu'))
+model.add(Dense(10,activation='softmax'))
+
+model.compile(loss='sparse_categorical_crossentropy',optimizer='Adam',metrics=['accuracy'])
+
+history = model.fit(x_train,y_train,epochs=20,validation_split=0.2)
+
+y_prob = model.predict(x_test)
+
+y_pred = y_prob.argmax(axis=1)
+
+from sklearn.metrics import accuracy_score
+accuracy_score(y_test,y_pred)
+
+Output- Accuracy: 0.9788
+
+results =model.evaluate(x_test,y_test, verbose=0)
+print('test loss, test accuracy:', results)
+
+Output- test loss, test accuracy: [0.1388930231332779, 0.9787999987602234]
